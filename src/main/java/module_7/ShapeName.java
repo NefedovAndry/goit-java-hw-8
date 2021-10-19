@@ -1,7 +1,7 @@
 package module_7;
 
 public class ShapeName {
-    public ShapeName(Shape shape) {
+    static void printName(Shape shape) {
         System.out.println(shape.getName());
     }
 }

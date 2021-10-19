@@ -5,7 +5,7 @@ public class Main {
         Shape[] shapeArray = new Shape[]{new Rectangle(), new Quad(), new Rhomb(), new Ellipse(), new Circle(),
                 new Line(), new Point()};
         for (Shape shape : shapeArray) {
-            new ShapeName(shape);
+            ShapeName.printName(shape);
         }
     }
 }
