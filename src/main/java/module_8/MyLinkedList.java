@@ -19,25 +19,36 @@ public class MyLinkedList implements MyList {
     private static class Node {
         Node previous;
         Object element;
+        Node next;
 
-        public Node(Node previous, Object element) {
+        public Node(Node previous, Object element, Node next) {
             this.previous = previous;
             this.element = element;
+            this.next = next;
         }
     }
 
     private int currentSize = 0;
-    private Node currentNode = null;
+    private Node currentHeadNode = null;
+    private Node currentTailNode = null;
 
     public MyLinkedList() {
-        currentNode = new Node(null, null);
-        currentSize = 0;
+        currentHeadNode = new Node(null, null, null);
+        currentTailNode = new Node(null, null, null);
     }
 
     @Override
     public boolean add(Object value) {
         if (value != null) {
-            currentNode = new Node(this.currentNode, value);
+            if (currentSize == 0) {
+                Node newNode = new Node(null, value, null);
+                currentHeadNode = newNode;
+                currentTailNode = newNode;
+            } else if (currentSize == 1) {
+                currentTailNode = new Node(currentHeadNode, value, null);
+            } else {
+                currentTailNode = new Node(this.currentTailNode, value, null);
+            }
             currentSize++;
             return true;
         } else {
@@ -52,14 +63,13 @@ public class MyLinkedList implements MyList {
         }
         Object result;
         if (currentSize == 1) {
-            result = currentNode.element;
-            currentNode.previous = null;
-            currentNode.element = null;
+            result = currentTailNode.element;
+            new MyLinkedList();
         } else {
             Node removingNode = nodeSearching(index);
-            Node nodeAfterRemovingNode = nodeSearching(index + 1);
             result = removingNode.element;
-            nodeAfterRemovingNode.previous = removingNode.previous;
+            removingNode.previous.next = removingNode.next;
+            removingNode.next.previous = removingNode.previous;
         }
         currentSize--;
         return result;
@@ -68,6 +78,7 @@ public class MyLinkedList implements MyList {
     @Override
     public void clear() {
         new MyLinkedList();
+        currentSize = 0;
     }
 
     @Override
@@ -80,35 +91,42 @@ public class MyLinkedList implements MyList {
         return nodeSearching(index).element;
     }
 
-    private Node nodeSearching(int index) throws IllegalArgumentException {
+    private Node nodeSearching(int index) {
+        return currentSize % index > 0 ? fromTailNodeSearching(index) : fromHeadNodeSearching(index);
+    }
+
+    private Node fromTailNodeSearching(int index) throws IllegalArgumentException {
         if (index > currentSize || index < 0) {
             throw new IllegalArgumentException("Index is out of this list bounds");
         } else {
-            Node searchingNode = currentNode;
-            for (int i = currentSize; i > index; i--) {
+            Node searchingNode = currentTailNode;
+            for (int i = currentSize - 1; i > index; i--) {
                 searchingNode = searchingNode.previous;
             }
             return searchingNode;
         }
     }
 
-    public Object[] toArray() {
-        Object[] resultArray = new Object[currentSize];
-        Node searchingNode = currentNode;
-        for (int i = currentSize - 1; i > 0; i--) {
-            resultArray[i] = searchingNode.element;
-            searchingNode = searchingNode.previous;
+    private Node fromHeadNodeSearching(int index) throws IllegalArgumentException {
+        if (index > currentSize || index < 0) {
+            throw new IllegalArgumentException("Index is out of this list bounds");
+        } else {
+            Node searchingNode = currentHeadNode;
+            for (int i = 0; i < index; i++) {
+                searchingNode = searchingNode.next;
+            }
+            return searchingNode;
         }
-        return resultArray;
     }
 
     @Override
     public String toString() {
-        Object[] array = toArray();
+        Node bufferNode = currentHeadNode;
         StringBuilder result = new StringBuilder("MyLinkedList{");
         for (int i = 0; i < currentSize; i++) {
-            result.append(array[i].toString());
+            result.append(bufferNode.element.toString());
             result.append(", ");
+            bufferNode = bufferNode.next;
         }
         result.deleteCharAt(result.length() - 1);
         result.deleteCharAt(result.length() - 1);
