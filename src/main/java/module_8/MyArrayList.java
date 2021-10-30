@@ -108,17 +108,13 @@ public class MyArrayList implements MyList {
             currentLength = MAX_SIZE;
         }
         Object[] newArray = new Object[currentLength];
-        int index = 0;
-        for (Object o : array) {
-            newArray[index] = o;
-            index++;
-        }
+        System.arraycopy(newArray, 0, array, 0, currentSize);
         array = newArray;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("MyArrayList{");
+        StringBuilder result = new StringBuilder("MyArrayList { size=" + currentSize + "; ");
         for (int i = 0; i < currentSize; i++) {
             result.append(array[i].toString());
             result.append(", ");

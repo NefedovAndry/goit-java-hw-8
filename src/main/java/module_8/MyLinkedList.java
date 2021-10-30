@@ -59,7 +59,7 @@ public class MyLinkedList implements MyList {
     @Override
     public Object remove(int index) throws IllegalArgumentException {
         if (index > currentSize || index < 0) {
-            throw new IllegalArgumentException("Index is out of this list bounds");
+            throw new IllegalArgumentException("Index is out of this list bounds" + index);
         }
         Object result;
         if (currentSize == 1) {
@@ -97,7 +97,7 @@ public class MyLinkedList implements MyList {
 
     private Node fromTailNodeSearching(int index) throws IllegalArgumentException {
         if (index > currentSize || index < 0) {
-            throw new IllegalArgumentException("Index is out of this list bounds");
+            throw new IllegalArgumentException("Index is out of this list bounds" + index);
         } else {
             Node searchingNode = currentTailNode;
             for (int i = currentSize - 1; i > index; i--) {
@@ -109,7 +109,7 @@ public class MyLinkedList implements MyList {
 
     private Node fromHeadNodeSearching(int index) throws IllegalArgumentException {
         if (index > currentSize || index < 0) {
-            throw new IllegalArgumentException("Index is out of this list bounds");
+            throw new IllegalArgumentException("Index is out of this list bounds" + index);
         } else {
             Node searchingNode = currentHeadNode;
             for (int i = 0; i < index; i++) {
@@ -122,10 +122,10 @@ public class MyLinkedList implements MyList {
     @Override
     public String toString() {
         Node bufferNode = currentHeadNode;
-        StringBuilder result = new StringBuilder("MyLinkedList{");
+        StringBuilder result = new StringBuilder("MyLinkedList { size=" + currentSize + "; \n");
         for (int i = 0; i < currentSize; i++) {
             result.append(bufferNode.element.toString());
-            result.append(", ");
+            result.append(", \n");
             bufferNode = bufferNode.next;
         }
         result.deleteCharAt(result.length() - 1);
