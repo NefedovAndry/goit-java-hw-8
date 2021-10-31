@@ -53,4 +53,17 @@ public class MyStack extends MyArrayList {
         currentSize--;
         return result;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("MyStack {size=" + currentSize + "; length=" + super.currentLength + "; ");
+        for (int i = 0; i < currentSize; i++) {
+            result.append(super.array[i].toString());
+            result.append(", ");
+        }
+        result.deleteCharAt(result.length() - 1);
+        result.deleteCharAt(result.length() - 1);
+        result.append("}");
+        return result.toString();
+    }
 }

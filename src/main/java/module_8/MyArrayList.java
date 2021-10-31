@@ -17,55 +17,22 @@ public class MyArrayList implements MyList {
 
     private static final int START_SIZE = 10;
     private static final int MAX_SIZE = Integer.MAX_VALUE;
-    private Object[] array;
-    private int currentSize = 0;
-    private int currentLength = START_SIZE;
+    protected Object[] array;
+    private int currentSize;
+    protected int currentLength;
 
     public MyArrayList() {
-        array = new Object[START_SIZE];
-    }
-
-    public MyArrayList(int newArraySize) {
-        currentLength = newArraySize < 1 ? 1 : newArraySize;
-        array = new Object[currentLength];
-    }
-
-    public MyArrayList(Object[] incomingArray) {
-        if (incomingArray != null) {
-            currentLength = incomingArray.length + 1;
-            currentSize = incomingArray.length;
-            array = new Object[currentLength];
-            System.arraycopy(incomingArray, 0, array, 0, incomingArray.length);
-        } else {
-            new MyArrayList();
-        }
+        clear();
     }
 
     public boolean add(Object value) {
         try {
-            if (currentSize >= currentLength) {
+            if (currentSize >= currentLength - 1) {
                 grow();
-            } else {
-                array[currentSize - 1] = value;
-                currentSize++;
-                return true;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
-    }
-
-    public boolean add(int index, Object value) {
-        try {
-            if (currentSize >= currentLength) {
-                grow();
-            } else {
-                System.arraycopy(array, index, array, index + 1, currentLength - 1 - index); // because the last element is always null
-                array[index] = value;
-                currentSize++;
-                return true;
-            }
+            array[currentSize] = value;
+            currentSize++;
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -77,9 +44,9 @@ public class MyArrayList implements MyList {
             return null;
         }
         Object buffer = array[index];
-        if (currentLength - index >= 0) System.arraycopy(array, index + 1, array, index, currentLength - index);
+        if (currentLength - index >= 0) System.arraycopy(array, index + 1, array, index, currentLength - index - 1);
         currentSize--;
-        if (currentLength % currentSize == currentSize - 1) {
+        if (currentSize <= currentLength / 2) {
             grow();
         }
         return buffer;
@@ -90,9 +57,9 @@ public class MyArrayList implements MyList {
     }
 
     public void clear() {
-        new MyArrayList();
-        currentSize = 0;
-        currentLength = START_SIZE;
+        this.array = new Object[START_SIZE];
+        this.currentLength = START_SIZE;
+        this.currentSize = 0;
     }
 
     public int size() {
@@ -108,13 +75,13 @@ public class MyArrayList implements MyList {
             currentLength = MAX_SIZE;
         }
         Object[] newArray = new Object[currentLength];
-        System.arraycopy(newArray, 0, array, 0, currentSize);
+        System.arraycopy(array, 0, newArray, 0, currentSize);
         array = newArray;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("MyArrayList { size=" + currentSize + "; ");
+        StringBuilder result = new StringBuilder("MyArrayList {size=" + currentSize + "; length=" + currentLength + "; ");
         for (int i = 0; i < currentSize; i++) {
             result.append(array[i].toString());
             result.append(", ");

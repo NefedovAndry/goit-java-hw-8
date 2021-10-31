@@ -26,7 +26,8 @@ public class MyHashMap {
     private int currentCountOfBuckets;
     private int numberOfNotEmptyBuckets;
     private Node[] bucketsArray;
-    private boolean[] isEmptyBucketArray;
+    private boolean[] isNotEmptyBucketArray;
+    private int[] countInBucket;
 
     private static class Node {
         final int hash;
@@ -57,30 +58,19 @@ public class MyHashMap {
     }
 
     public MyHashMap() {
-        this.currentSize = 0;
-        this.numberOfNotEmptyBuckets = 0;
-        this.currentCountOfBuckets = DEFAULT_COUNT_OF_BUCKETS;
-        this.bucketsArray = new Node[DEFAULT_COUNT_OF_BUCKETS];
-        this.isEmptyBucketArray = new boolean[DEFAULT_COUNT_OF_BUCKETS];
-        booleanArrayReload(isEmptyBucketArray);
-    }
-
-    private void booleanArrayReload(boolean[] array) {
-        for (boolean item : array) {
-            item = true;
-        }
+        clear();
     }
 
     public void put(Node[] array, Object key, Object value) {
         if (currentSize < MAX_SIZE) {
+            int bucketIndex = findBucketIndex(key);
             Node newNode = new Node(key, value);
-            putInBucket(array, findBucketIndex(key), newNode);
-            currentSize++;
-            if (isEmptyBucketArray[findBucketIndex(key)]) {
+            putInBucket(array, bucketIndex, newNode);
+            if (!isNotEmptyBucketArray[bucketIndex]) {
                 numberOfNotEmptyBuckets++;
-                isEmptyBucketArray[findBucketIndex(key)] = false;
+                isNotEmptyBucketArray[bucketIndex] = true;
             }
-            if (numberOfNotEmptyBuckets > currentCountOfBuckets * DEFAULT_LOAD_FACTOR) {
+            if (numberOfNotEmptyBuckets > currentCountOfBuckets * DEFAULT_LOAD_FACTOR || countInBucket[bucketIndex] > 8) {
                 resize(currentCountOfBuckets * 2);
             }
         } else {
@@ -104,6 +94,8 @@ public class MyHashMap {
             Node bufferNode = array[bucketIndex];
             array[bucketIndex] = node;
             node.previous = bufferNode;
+            currentSize++;
+            countInBucket[bucketIndex]++;
         }
     }
 
@@ -114,12 +106,12 @@ public class MyHashMap {
     private Node findEqualNodeInBucket(Node[] array, int bucketIndex, Object key) { // for resizing
         if (array[bucketIndex] != null) {
             Node bufferNode = array[bucketIndex];
-            while (bufferNode.previous != null) {
+            do {
                 if (bufferNode.key.equals(key)) {
                     return bufferNode;
                 }
                 bufferNode = bufferNode.previous;
-            }
+            } while (bufferNode.previous != null);
         }
         return null;
     }
@@ -133,39 +125,49 @@ public class MyHashMap {
             Node previousBufferNode = bucketsArray[bucketIndex];
             Node bufferNode = previousBufferNode.previous;
             if (bufferNode != null) {
-                while (bufferNode.previous != null) {
+                do {
                     if (bufferNode.key.equals(key)) {
                         return previousBufferNode;
                     }
                     previousBufferNode = bufferNode;
                     bufferNode = bufferNode.previous;
-                }
+                } while (bufferNode.previous != null);
             }
         }
         return null;
     }
 
     public Node remove(Object key) {
-        Node sameNodeInBucket = findEqualNodeInBucket(findBucketIndex(key), key);
-        Node previousSameNodeInBucket = findPreviousNodeInBucket(findBucketIndex(key), key);
-        if (sameNodeInBucket != null && previousSameNodeInBucket != null) {
-            previousSameNodeInBucket.previous = sameNodeInBucket.previous;
-            currentSize--;
-            return sameNodeInBucket;
+        int bucketIndex = findBucketIndex(key);
+        Node sameNodeInBucket = findEqualNodeInBucket(bucketIndex, key);
+        Node previousSameNodeInBucket = findPreviousNodeInBucket(bucketIndex, key);
+        if (sameNodeInBucket == null) {
+            return null;
         } else if (previousSameNodeInBucket == null) {
-            bucketsArray[findBucketIndex(key)] = null;
+            bucketsArray[bucketIndex] = null;
             currentSize--;
-            isEmptyBucketArray[findBucketIndex(key)] = true;
+            countInBucket[bucketIndex]--;
+            isNotEmptyBucketArray[bucketIndex] = false;
             numberOfNotEmptyBuckets--;
             if (numberOfNotEmptyBuckets < currentCountOfBuckets / 2) {
                 resize(currentCountOfBuckets - currentCountOfBuckets / 4);
             }
+            return sameNodeInBucket;
+        } else {
+            previousSameNodeInBucket.previous = sameNodeInBucket.previous;
+            currentSize--;
+            countInBucket[bucketIndex]--;
+            return sameNodeInBucket;
         }
-        return sameNodeInBucket;
     }
 
     public void clear() {
-        new MyHashMap();
+        this.currentSize = 0;
+        this.numberOfNotEmptyBuckets = 0;
+        this.currentCountOfBuckets = DEFAULT_COUNT_OF_BUCKETS;
+        this.bucketsArray = new Node[DEFAULT_COUNT_OF_BUCKETS];
+        this.isNotEmptyBucketArray = new boolean[DEFAULT_COUNT_OF_BUCKETS];
+        this.countInBucket = new int[DEFAULT_COUNT_OF_BUCKETS];
     }
 
     public int size() {
@@ -178,24 +180,27 @@ public class MyHashMap {
     }
 
     private void resize(int count) {
-        currentCountOfBuckets = count;
-        numberOfNotEmptyBuckets = 0;
-        Node[] newBucketsArray = new Node[currentCountOfBuckets];
-        isEmptyBucketArray = new boolean[currentCountOfBuckets];
-        booleanArrayReload(isEmptyBucketArray);
-        for (Node bucket : bucketsArray) {
-            Node bufferNode = bucket;
-            while (bufferNode != null) {
-                put(newBucketsArray, bufferNode.key, bufferNode.value);
-                bufferNode = bufferNode.previous;
+        if (currentSize < MAX_SIZE * DEFAULT_LOAD_FACTOR) {
+            currentCountOfBuckets = count;
+            numberOfNotEmptyBuckets = 0;
+            currentSize = 0;
+            Node[] newBucketsArray = new Node[currentCountOfBuckets];
+            isNotEmptyBucketArray = new boolean[currentCountOfBuckets];
+            for (Node bucket : bucketsArray) {
+                Node bufferNode = bucket;
+                while (bufferNode != null) {
+                    put(newBucketsArray, bufferNode.key, bufferNode.value);
+                    bufferNode = bufferNode.previous;
+                }
             }
+            bucketsArray = newBucketsArray;
         }
-        bucketsArray = newBucketsArray;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("MyHashMap { size=" + currentSize + "; \n");
+        StringBuilder result = new StringBuilder("MyHashMap { size=" + currentSize + "; "
+                + "currentCountOfBuckets: " + currentCountOfBuckets + "; \n");
         for (Node bucket : bucketsArray) {
             Node bufferNode = bucket;
             while (bufferNode != null) {
