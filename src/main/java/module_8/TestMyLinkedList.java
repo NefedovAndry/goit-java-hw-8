@@ -17,9 +17,17 @@ public class TestMyLinkedList {
         myLinkedList.remove(6);
         myLinkedList.remove(6);
         System.out.println(myLinkedList);
-        System.out.println(myLinkedList.get(5));
+        System.out.println(myLinkedList.get(6));
         myLinkedList.remove(6);
         myLinkedList.remove(6);
+        System.out.println(myLinkedList);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
+        myLinkedList.remove(0);
         System.out.println(myLinkedList);
         myLinkedList.clear();
         System.out.println(myLinkedList);
