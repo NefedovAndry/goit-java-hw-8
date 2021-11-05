@@ -6,7 +6,7 @@ public class TestMyHashMap {
         myHashMap.put("0", 0);
         myHashMap.put("1", 1);
         myHashMap.put("2", 2);
-        myHashMap.put("3", 3);
+        myHashMap.put(null, 3);
         myHashMap.put("4", 4);
         myHashMap.put("5", 5);
         myHashMap.put("6", 6);
