@@ -2,7 +2,11 @@ package module_8;
 
 public class TestMyQueue {
     public static void main(String[] args) {
-        MyList myQueue = new MyQueue();
+        MyQueue myQueue = new MyQueue();
+        myQueue.poll();
+        System.out.println(myQueue);
+//        myQueue.remove(5);
+//        System.out.println(myQueue);
         myQueue.add(0);
         myQueue.add(1);
         myQueue.add(2);

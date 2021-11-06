@@ -74,7 +74,7 @@ public class MyHashMap {
                 resize(currentCountOfBuckets * 2);
             }
         } else {
-            throw new IllegalArgumentException("Sorry, hashMap too big.");
+            throw new IllegalArgumentException("Sorry, hashMap is too big.");
         }
     }
 

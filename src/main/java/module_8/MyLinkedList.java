@@ -26,11 +26,17 @@ public class MyLinkedList implements MyList {
             this.element = element;
             this.next = next;
         }
+
+        public Node() {
+            this.previous = null;
+            this.element = null;
+            this.next = null;
+        }
     }
 
-    private int currentSize;
-    private Node currentHeadNode = null;
-    private Node currentTailNode = null;
+    private int size;
+    private Node headNode = null;
+    private Node tailNode = null;
 
     public MyLinkedList() {
         clear();
@@ -39,18 +45,18 @@ public class MyLinkedList implements MyList {
     @Override
     public boolean add(Object value) {
         if (value != null) {
-            if (currentSize == 0) {
-                Node newNode = new Node(null, value, null);
-                currentHeadNode = newNode;
-                currentTailNode = newNode;
-            } else if (currentSize == 1) {
-                currentTailNode = new Node(currentHeadNode, value, null);
-                currentHeadNode.next = currentTailNode;
+            if (size == 0) {
+                Node newNode = new Node();
+                headNode = newNode;
+                tailNode = newNode;
+            } else if (size == 1) {
+                tailNode = new Node(headNode, value, null);
+                headNode.next = tailNode;
             } else {
-                currentTailNode = new Node(this.currentTailNode, value, null);
-                currentTailNode.previous.next = currentTailNode;
+                tailNode = new Node(this.tailNode, value, null);
+                tailNode.previous.next = tailNode;
             }
-            currentSize++;
+            size++;
             return true;
         } else {
             return false;
@@ -59,41 +65,41 @@ public class MyLinkedList implements MyList {
 
     @Override
     public Object remove(int index) throws IllegalArgumentException {
-        if (index + 1 > currentSize || index < 0) {
+        if (index + 1 > size || index < 0) {
             throw new IllegalArgumentException("Index \"" + index + "\" is out of this list bounds");
         }
         Object result;
-        if (currentSize == 1) {
-            result = currentTailNode.element;
+        if (size == 1) {
+            result = tailNode.element;
             clear();
         } else {
             Node removingNode = nodeSearching(index);
             result = removingNode.element;
-            if (removingNode != currentHeadNode && removingNode != currentTailNode){
+            if (removingNode != headNode && removingNode != tailNode){
                 removingNode.previous.next = removingNode.next;
                 removingNode.next.previous = removingNode.previous;
-            } else if (removingNode == currentHeadNode) {
+            } else if (removingNode == headNode) {
                 removingNode.next.previous = null;
-                currentHeadNode = removingNode.next;
+                headNode = removingNode.next;
             } else {
                 removingNode.previous.next = null;
-                currentTailNode = removingNode.previous;
+                tailNode = removingNode.previous;
             }
-            currentSize--;
+            size--;
         }
         return result;
     }
 
     @Override
     public void clear() {
-        currentHeadNode = new Node(null, null, null);
-        currentTailNode = new Node(null, null, null);
-        currentSize = 0;
+        headNode = new Node();
+        tailNode = new Node();
+        size = 0;
     }
 
     @Override
     public int size() {
-        return currentSize;
+        return size;
     }
 
     @Override
@@ -102,15 +108,15 @@ public class MyLinkedList implements MyList {
     }
 
     private Node nodeSearching(int index) {
-        return index + 1 > currentSize / 2 ? fromTailNodeSearching(index) : fromHeadNodeSearching(index);
+        return index + 1 > size / 2 ? fromTailNodeSearching(index) : fromHeadNodeSearching(index);
     }
 
     private Node fromTailNodeSearching(int index) throws IllegalArgumentException {
-        if (index + 1 > currentSize || index < 0) {
+        if (index + 1 > size || index < 0) {
             throw new IllegalArgumentException("Index \"" + index + "\" is out of this list bounds");
         } else {
-            Node searchingNode = currentTailNode;
-            for (int i = currentSize - 1; i > index; i--) {
+            Node searchingNode = tailNode;
+            for (int i = size - 1; i > index; i--) {
                 searchingNode = searchingNode.previous;
             }
             return searchingNode;
@@ -118,10 +124,10 @@ public class MyLinkedList implements MyList {
     }
 
     private Node fromHeadNodeSearching(int index) throws IllegalArgumentException {
-        if (index > currentSize || index < 0) {
+        if (index > size || index < 0) {
             throw new IllegalArgumentException("Index \"" + index + "\" is out of this list bounds");
         } else {
-            Node searchingNode = currentHeadNode;
+            Node searchingNode = headNode;
             for (int i = 0; i < index; i++) {
                 searchingNode = searchingNode.next;
             }
@@ -131,9 +137,9 @@ public class MyLinkedList implements MyList {
 
     @Override
     public String toString() {
-        Node bufferNode = currentHeadNode;
-        StringBuilder result = new StringBuilder("MyLinkedList {size=" + currentSize + "; ");
-        for (int i = 0; i < currentSize; i++) {
+        Node bufferNode = headNode;
+        StringBuilder result = new StringBuilder("MyLinkedList {size=" + size + "; ");
+        for (int i = 0; i < size; i++) {
             if (bufferNode.element != null) {
                 result.append(bufferNode.element);
                 result.append(", ");

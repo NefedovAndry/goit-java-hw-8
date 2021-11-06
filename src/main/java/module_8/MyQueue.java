@@ -14,54 +14,108 @@ size() возвращает размер коллекции
 peek() возвращает первый элемент в очереди (FIFO)
 poll() возвращает первый элемент в очереди и удаляет его из коллекции*/
 
-public class MyQueue extends MyArrayList {
+public class MyQueue {
 
-    private int currentSize = 0;
+    private static final int MAX_SIZE = Integer.MAX_VALUE;
+    private int size = 0;
+    private Node headNode;
+    private Node tailNode;
+
+    private static class Node {
+        final Object value;
+        Node next;
+
+        public Node(Object value, Node next) {
+            this.value = value;
+            this.next = next;
+        }
+
+        public Node(Object value) {
+            this.value = value;
+            this.next = null;
+        }
+
+        public Node() {
+            this.value = null;
+            this.next = null;
+        }
+    }
 
     public MyQueue() {
-        super();
+        clear();
     }
 
-    @Override
     public boolean add(Object value) {
-        currentSize++;
-        return super.add(value);
+        if (size >= MAX_SIZE) {
+            throw new IllegalArgumentException("Sorry, queue is too big.");
+        }
+        if (value != null) {
+            Node newNode = new Node(value);
+            if (size == 0) {
+                headNode = newNode;
+            } else {
+                tailNode.next = newNode;
+            }
+            tailNode = newNode;
+            size++;
+            return true;
+        } else {
+            throw new NullPointerException("Trying to add null-value");
+        }
     }
 
-    @Override
     public Object remove(int index) {
-        Object result = super.remove(index);
-        currentSize--;
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Illegal index: " + index);
+        }
+        Object result;
+        Node bufferNode = headNode;
+        if (index == 1) {
+            result = bufferNode.value;
+            clear();
+        } else {
+            for (int i = 0; i < index - 1; i++) {
+                bufferNode = bufferNode.next;
+            }
+            result = bufferNode.next.value;
+            bufferNode.next = bufferNode.next.next;
+            size--;
+        }
         return result;
     }
 
-    @Override
     public void clear() {
-        new MyQueue();
-        currentSize = 0;
+        headNode = new Node();
+        tailNode = new Node();
+        size = 0;
     }
 
-    @Override
     public int size() {
-        return currentSize;
+        return size;
     }
 
     public Object peek() {
-        return super.get(0);
+        return headNode.value;
     }
 
     public Object poll() {
-        Object result = super.remove(0);
-        currentSize--;
+        if (size == 0) {
+            return null;
+        }
+        Object result = headNode.value;
+        headNode = headNode.next;
+        size--;
         return result;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("MyQueue {size=" + currentSize + "; length=" + super.currentLength + "; ");
-        for (int i = 0; i < currentSize; i++) {
-            result.append(super.array[i].toString());
+        StringBuilder result = new StringBuilder("MyQueue {size=" + size + "; ");
+        Node bufferNode = headNode;
+        for (int i = 0; i < size; i++) {
+            result.append(bufferNode.value);
             result.append(", ");
+            bufferNode = bufferNode.next;
         }
         result.deleteCharAt(result.length() - 1);
         result.deleteCharAt(result.length() - 1);
