@@ -22,7 +22,7 @@ public class MyHashMap {
     private final static int DEFAULT_COUNT_OF_BUCKETS = 16;
     private static final int MAX_SIZE = Integer.MAX_VALUE;
     private final static float DEFAULT_LOAD_FACTOR = 0.75f;
-    private int currentSize;
+    private int size;
     private int currentCountOfBuckets;
     private int numberOfNotEmptyBuckets;
     private Node[] bucketsArray;
@@ -62,7 +62,7 @@ public class MyHashMap {
     }
 
     public void put(Node[] array, Object key, Object value) {
-        if (currentSize < MAX_SIZE) {
+        if (size < MAX_SIZE) {
             int bucketIndex = findBucketIndex(key);
             Node newNode = new Node(key, value);
             putInBucket(array, bucketIndex, newNode);
@@ -94,7 +94,7 @@ public class MyHashMap {
             Node bufferNode = array[bucketIndex];
             array[bucketIndex] = node;
             node.previous = bufferNode;
-            currentSize++;
+            size++;
             countInBucket[bucketIndex]++;
         }
     }
@@ -148,7 +148,7 @@ public class MyHashMap {
             return null;
         } else if (previousSameNodeInBucket == null) {
             bucketsArray[bucketIndex] = null;
-            currentSize--;
+            size--;
             countInBucket[bucketIndex]--;
             isBucketNotEmptyArray[bucketIndex] = false;
             numberOfNotEmptyBuckets--;
@@ -158,14 +158,14 @@ public class MyHashMap {
             return sameNodeInBucket;
         } else {
             previousSameNodeInBucket.previous = sameNodeInBucket.previous;
-            currentSize--;
+            size--;
             countInBucket[bucketIndex]--;
             return sameNodeInBucket;
         }
     }
 
     public void clear() {
-        this.currentSize = 0;
+        this.size = 0;
         this.numberOfNotEmptyBuckets = 0;
         this.currentCountOfBuckets = DEFAULT_COUNT_OF_BUCKETS;
         this.bucketsArray = new Node[DEFAULT_COUNT_OF_BUCKETS];
@@ -174,7 +174,7 @@ public class MyHashMap {
     }
 
     public int size() {
-        return currentSize;
+        return size;
     }
 
     public Object get(Object key) {
@@ -183,10 +183,10 @@ public class MyHashMap {
     }
 
     private void resize(int count) {
-        if (currentSize < MAX_SIZE * DEFAULT_LOAD_FACTOR) {
+        if (size < MAX_SIZE * DEFAULT_LOAD_FACTOR) {
             currentCountOfBuckets = count;
             numberOfNotEmptyBuckets = 0;
-            currentSize = 0;
+            size = 0;
             Node[] newBucketsArray = new Node[currentCountOfBuckets];
             isBucketNotEmptyArray = new boolean[currentCountOfBuckets];
             for (Node bucket : bucketsArray) {
@@ -202,18 +202,23 @@ public class MyHashMap {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("MyHashMap { size=" + currentSize + "; "
+        StringBuilder result = new StringBuilder("MyHashMap { size=" + size + "; "
                 + "currentCountOfBuckets: " + currentCountOfBuckets + "; \n");
-        for (Node bucket : bucketsArray) {
-            Node bufferNode = bucket;
-            while (bufferNode != null) {
-                result.append("key=")
-                        .append(bufferNode.key)
-                        .append(" : value=")
-                        .append(bufferNode.value)
-                        .append(";\n");
-                bufferNode = bufferNode.previous;
+        if (size != 0){
+            for (Node bucket : bucketsArray) {
+                Node bufferNode = bucket;
+                while (bufferNode != null) {
+                    result.append("key=")
+                            .append(bufferNode.key)
+                            .append(" : value=")
+                            .append(bufferNode.value)
+                            .append(";\n");
+                    bufferNode = bufferNode.previous;
+                }
             }
+        } else {
+            result.deleteCharAt(result.length() - 1);
+            result.append((Object) null);
         }
         result.append("}");
         return result.toString();

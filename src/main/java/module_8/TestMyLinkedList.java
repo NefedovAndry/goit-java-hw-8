@@ -27,7 +27,7 @@ public class TestMyLinkedList {
         myLinkedList.remove(0);
         myLinkedList.remove(0);
         myLinkedList.remove(0);
-        myLinkedList.remove(0);
+//        myLinkedList.remove(0);
         System.out.println(myLinkedList);
         myLinkedList.clear();
         System.out.println(myLinkedList);

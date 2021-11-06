@@ -21,11 +21,11 @@ public class TestMyQueue {
         myQueue.remove(6);
         myQueue.remove(6);
         System.out.println(myQueue);
-        System.out.println(((MyQueue) myQueue).peek());
-        ((MyQueue) myQueue).poll();
-        ((MyQueue) myQueue).poll();
+        System.out.println(myQueue.peek());
+        myQueue.poll();
+        myQueue.poll();
         System.out.println(myQueue);
-        System.out.println(((MyQueue) myQueue).peek());
+        System.out.println(myQueue.peek());
         myQueue.clear();
         System.out.println(myQueue);
     }

@@ -27,6 +27,12 @@ public class MyLinkedList implements MyList {
             this.next = next;
         }
 
+        public Node(Object element) {
+            this.previous = null;
+            this.element = element;
+            this.next = null;
+        }
+
         public Node() {
             this.previous = null;
             this.element = null;
@@ -46,7 +52,7 @@ public class MyLinkedList implements MyList {
     public boolean add(Object value) {
         if (value != null) {
             if (size == 0) {
-                Node newNode = new Node();
+                Node newNode = new Node(value);
                 headNode = newNode;
                 tailNode = newNode;
             } else if (size == 1) {
@@ -75,7 +81,7 @@ public class MyLinkedList implements MyList {
         } else {
             Node removingNode = nodeSearching(index);
             result = removingNode.element;
-            if (removingNode != headNode && removingNode != tailNode){
+            if (removingNode != headNode && removingNode != tailNode) {
                 removingNode.previous.next = removingNode.next;
                 removingNode.next.previous = removingNode.previous;
             } else if (removingNode == headNode) {
@@ -139,12 +145,17 @@ public class MyLinkedList implements MyList {
     public String toString() {
         Node bufferNode = headNode;
         StringBuilder result = new StringBuilder("MyLinkedList {size=" + size + "; ");
-        for (int i = 0; i < size; i++) {
-            if (bufferNode.element != null) {
-                result.append(bufferNode.element);
-                result.append(", ");
-                bufferNode = bufferNode.next;
+        if (headNode.element != null) {
+            for (int i = 0; i < size; i++) {
+                if (bufferNode.element != null) {
+                    result.append(bufferNode.element)
+                            .append(", ");
+                    bufferNode = bufferNode.next;
+                }
             }
+        } else {
+            result.append((Object) null)
+                    .append(", ");
         }
         result.deleteCharAt(result.length() - 1);
         result.deleteCharAt(result.length() - 1);

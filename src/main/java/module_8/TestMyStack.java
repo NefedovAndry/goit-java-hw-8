@@ -2,26 +2,27 @@ package module_8;
 
 public class TestMyStack {
     public static void main(String[] args) {
-        MyList myStack = new MyStack();
-        ((MyStack) myStack).push(0);
-        ((MyStack) myStack).push(1);
-        ((MyStack) myStack).push(2);
-        ((MyStack) myStack).push(3);
-        ((MyStack) myStack).push(4);
-        ((MyStack) myStack).push(5);
-        ((MyStack) myStack).push(6);
-        ((MyStack) myStack).push(7);
-        ((MyStack) myStack).push(8);
-        ((MyStack) myStack).push(9);
+        MyStack myStack = new MyStack();
+        myStack.push(0);
+        myStack.push(1);
+        myStack.push(2);
+        myStack.push(3);
+        myStack.push(4);
+        myStack.push(5);
+        myStack.push(6);
+        myStack.push(7);
+        myStack.push(8);
+        myStack.push(9);
         System.out.println(myStack);
+        myStack.poll();
         myStack.remove(6);
         myStack.remove(6);
         System.out.println(myStack);
-        System.out.println(((MyStack) myStack).peek());
-        ((MyStack) myStack).poll();
-        ((MyStack) myStack).poll();
+        System.out.println(myStack.peek());
+        myStack.poll();
+        myStack.poll();
         System.out.println(myStack);
-        System.out.println(((MyStack) myStack).peek());
+        System.out.println(myStack.peek());
         myStack.clear();
         System.out.println(myStack);
     }

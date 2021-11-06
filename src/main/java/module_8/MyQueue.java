@@ -45,7 +45,7 @@ public class MyQueue {
         clear();
     }
 
-    public boolean add(Object value) {
+    public final boolean add(Object value) {
         if (size >= MAX_SIZE) {
             throw new IllegalArgumentException("Sorry, queue is too big.");
         }
@@ -112,10 +112,15 @@ public class MyQueue {
     public String toString() {
         StringBuilder result = new StringBuilder("MyQueue {size=" + size + "; ");
         Node bufferNode = headNode;
-        for (int i = 0; i < size; i++) {
-            result.append(bufferNode.value);
-            result.append(", ");
-            bufferNode = bufferNode.next;
+        if (bufferNode.value != null) {
+            for (int i = 0; i < size; i++) {
+                result.append(bufferNode.value)
+                        .append(", ");
+                bufferNode = bufferNode.next;
+            }
+        } else {
+            result.append((Object) null)
+                    .append(", ");
         }
         result.deleteCharAt(result.length() - 1);
         result.deleteCharAt(result.length() - 1);
