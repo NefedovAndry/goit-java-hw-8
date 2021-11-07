@@ -14,13 +14,13 @@ public class TestMyStack {
         myStack.push(8);
         myStack.push(9);
         System.out.println(myStack);
-        myStack.poll();
+        myStack.pop();
         myStack.remove(6);
         myStack.remove(6);
         System.out.println(myStack);
         System.out.println(myStack.peek());
-        myStack.poll();
-        myStack.poll();
+        myStack.pop();
+        myStack.pop();
         System.out.println(myStack);
         System.out.println(myStack.peek());
         myStack.clear();

@@ -98,7 +98,7 @@ public class MyStack {
         return tailNode.value;
     }
 
-    public Object poll() {
+    public Object pop() {
         if (size == 0) {
             return null;
         }

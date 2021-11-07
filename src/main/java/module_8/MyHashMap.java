@@ -107,6 +107,9 @@ public class MyHashMap {
         if (array[bucketIndex] != null) {
             Node bufferNode = array[bucketIndex];
             do {
+                if (key == null && bufferNode.key == null) {
+                    return bufferNode;
+                }
                 if (bufferNode.key.equals(key)) {
                     return bufferNode;
                 }
@@ -142,9 +145,9 @@ public class MyHashMap {
 
     public Node remove(Object key) {
         int bucketIndex = findBucketIndex(key);
-        Node sameNodeInBucket = findEqualNodeInBucket(bucketIndex, key);
+        Node equalNodeInBucket = findEqualNodeInBucket(bucketIndex, key);
         Node previousSameNodeInBucket = findPreviousNodeInBucket(bucketIndex, key);
-        if (sameNodeInBucket == null) {
+        if (equalNodeInBucket == null) {
             return null;
         } else if (previousSameNodeInBucket == null) {
             bucketsArray[bucketIndex] = null;
@@ -155,12 +158,12 @@ public class MyHashMap {
             if (numberOfNotEmptyBuckets < currentCountOfBuckets / 2) {
                 resize(currentCountOfBuckets - currentCountOfBuckets / 4);
             }
-            return sameNodeInBucket;
+            return equalNodeInBucket;
         } else {
-            previousSameNodeInBucket.previous = sameNodeInBucket.previous;
+            previousSameNodeInBucket.previous = equalNodeInBucket.previous;
             size--;
             countInBucket[bucketIndex]--;
-            return sameNodeInBucket;
+            return equalNodeInBucket;
         }
     }
 
@@ -178,8 +181,8 @@ public class MyHashMap {
     }
 
     public Object get(Object key) {
-        Node sameNodeInBucket = findEqualNodeInBucket(findBucketIndex(key), key);
-        return sameNodeInBucket != null ? sameNodeInBucket.value : null;
+        Node equalNodeInBucket = findEqualNodeInBucket(findBucketIndex(key), key);
+        return equalNodeInBucket != null ? equalNodeInBucket.value : null;
     }
 
     private void resize(int count) {

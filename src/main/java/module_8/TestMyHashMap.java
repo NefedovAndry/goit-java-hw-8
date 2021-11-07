@@ -21,6 +21,9 @@ public class TestMyHashMap {
         myHashMap.put("9", 99);
         System.out.println(myHashMap);
         System.out.println(myHashMap.get("3"));
+        System.out.println(myHashMap.get(null));
+        myHashMap.put(null, 6);
+        System.out.println(myHashMap.get(null));
         myHashMap.clear();
         System.out.println(myHashMap);
     }
